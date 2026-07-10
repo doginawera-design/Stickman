@@ -1,0 +1,528 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+:root {
+  --primary: #ff6b35;
+  --secondary: #4ecdc4;
+  --accent: #ffe66d;
+  --dark: #1a1a2e;
+  --darker: #0f0f1a;
+  --text: #ffffff;
+  --hp-player: #4ade80;
+  --hp-enemy: #f87171;
+  --btn-size: 64px;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--darker);
+  color: var(--text);
+  touch-action: manipulation;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* ===== МЕНЮ ===== */
+#menu-screen {
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.menu-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+  z-index: 0;
+}
+
+.menu-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(78, 205, 196, 0.15) 0%, transparent 50%);
+  animation: bgPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes bgPulse {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+.menu-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 20px;
+  animation: fadeInUp 0.8s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.game-title {
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  letter-spacing: 2px;
+}
+
+.game-subtitle {
+  font-size: clamp(1rem, 4vw, 1.4rem);
+  color: var(--secondary);
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.hero-preview {
+  margin: 20px auto;
+  animation: heroBounce 2s ease-in-out infinite;
+}
+
+@keyframes heroBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.btn {
+  display: block;
+  width: min(280px, 80vw);
+  margin: 10px auto;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  letter-spacing: 0.5px;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), #ff8c42);
+  color: white;
+  box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ===== ИГРОВОЙ ЭКРАН ===== */
+#game-screen {
+  background: var(--dark);
+}
+
+#hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.hud-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hud-left span {
+  display: block;
+  font-size: 0.85rem;
+}
+
+#level-label {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+#level-name {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.75rem !important;
+}
+
+.hud-right {
+  display: flex;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.hud-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  font-size: 1rem;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.hud-btn:active {
+  background: rgba(255,255,255,0.3);
+}
+
+.hud-bars {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.bar-group {
+  flex: 1;
+}
+
+.bar-label {
+  font-size: 0.7rem;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.bar {
+  height: 8px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.hp-player { background: var(--hp-player); }
+.hp-enemy { background: var(--hp-enemy); }
+
+.hud-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+  font-size: 0.85rem;
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ===== УПРАВЛЕНИЕ ===== */
+#controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px 20px;
+  pointer-events: none;
+}
+
+.controls-left,
+.controls-right {
+  display: flex;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.ctrl-btn {
+  width: var(--btn-size);
+  height: var(--btn-size);
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  border: 2px solid rgba(255,255,255,0.25);
+  transition: background 0.1s, transform 0.1s;
+  touch-action: none;
+}
+
+.ctrl-btn:active,
+.ctrl-btn.pressed {
+  background: rgba(255, 107, 53, 0.6);
+  transform: scale(0.92);
+  border-color: var(--primary);
+}
+
+.ctrl-jump {
+  background: rgba(78, 205, 196, 0.3);
+  border-color: rgba(78, 205, 196, 0.5);
+}
+
+.ctrl-attack {
+  background: rgba(255, 107, 53, 0.3);
+  border-color: rgba(255, 107, 53, 0.5);
+  font-size: 1.3rem;
+}
+
+/* ===== ОВЕРЛЕИ ===== */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.puzzle-panel {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 2px solid var(--secondary);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 90vw;
+  text-align: center;
+  animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.puzzle-panel h3 {
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.puzzle-panel p {
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.puzzle-option {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.puzzle-option:active {
+  background: rgba(78, 205, 196, 0.3);
+  border-color: var(--secondary);
+}
+
+.hint {
+  color: var(--accent);
+  font-style: italic;
+  margin-top: 12px;
+  font-size: 0.9rem;
+}
+
+.hint.hidden { display: none; }
+
+#message-overlay p {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  padding: 20px;
+  animation: fadeInUp 0.5s ease;
+}
+
+/* ===== ПАНЕЛИ ===== */
+.overlay-screen {
+  z-index: 30;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(8px);
+}
+
+.panel {
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  max-width: 90vw;
+  animation: popIn 0.4s ease;
+}
+
+.panel h2 {
+  margin-bottom: 12px;
+  font-size: 1.6rem;
+}
+
+.panel p {
+  margin-bottom: 20px;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.5;
+}
+
+.defeat-panel h2 { color: #f87171; }
+.victory-panel h2 { color: var(--accent); }
+
+/* ===== ФИНАЛ ===== */
+#final-victory-screen {
+  overflow: hidden;
+}
+
+#confetti-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.final-panel {
+  position: relative;
+  z-index: 2;
+  border-color: var(--accent);
+  box-shadow: 0 0 40px rgba(255, 230, 109, 0.3);
+}
+
+#final-scene-canvas {
+  margin: 0 auto 16px;
+  display: block;
+  border-radius: 12px;
+}
+
+.final-title {
+  font-size: clamp(1.8rem, 7vw, 2.8rem);
+  background: linear-gradient(135deg, var(--accent), var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.3); }
+}
+
+.final-subtitle {
+  font-size: 1.1rem;
+  color: var(--secondary);
+}
+
+/* ===== ДОСТИЖЕНИЯ ===== */
+.achievements-panel {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#achievements-list {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+#achievements-list li {
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s;
+}
+
+#achievements-list li.unlocked {
+  background: rgba(78, 205, 196, 0.15);
+  border-color: var(--secondary);
+}
+
+.achievement-icon {
+  font-size: 1.5rem;
+  width: 36px;
+  text-align: center;
+}
+
+.achievement-info {
+  flex: 1;
+}
+
+.achievement-name {
+  font-weight: 700;
+  display: block;
+}
+
+.achievement-desc {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.6);
+}
+
+.achievement-locked {
+  opacity: 0.4;
+}
+
+/* ===== АДАПТАЦИЯ ===== */
+@media (max-height: 500px) {
+  :root { --btn-size: 52px; }
+  #controls { padding: 6px 12px 10px; }
+  .hud-bars { display: none; }
+}
+
+@media (min-width: 768px) {
+  #controls {
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

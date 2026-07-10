@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Стикмен: спасение принцессы</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Главное меню -->
+    <div id="menu-screen" class="screen active">
+      <div class="menu-bg"></div>
+      <div class="menu-content">
+        <h1 class="game-title">Стикмен</h1>
+        <p class="game-subtitle">Спасение принцессы</p>
+        <div class="hero-preview">
+          <canvas id="menu-canvas" width="120" height="160"></canvas>
+        </div>
+        <button id="btn-start" class="btn btn-primary">▶ Начать игру</button>
+        <button id="btn-continue" class="btn btn-secondary">Продолжить</button>
+        <button id="btn-achievements-menu" class="btn btn-secondary">🏆 Достижения</button>
+      </div>
+    </div>
+
+    <!-- Игровой экран -->
+    <div id="game-screen" class="screen">
+      <div id="hud">
+        <div class="hud-top">
+          <div class="hud-left">
+            <span id="level-label">Уровень 1</span>
+            <span id="level-name">Лес</span>
+          </div>
+          <div class="hud-right">
+            <button id="btn-sound" class="hud-btn" title="Звук">🔊</button>
+            <button id="btn-pause" class="hud-btn" title="Пауза">⏸</button>
+          </div>
+        </div>
+        <div class="hud-bars">
+          <div class="bar-group">
+            <span class="bar-label">❤️ Миша</span>
+            <div class="bar"><div id="player-hp" class="bar-fill hp-player"></div></div>
+          </div>
+          <div class="bar-group" id="enemy-bar-group">
+            <span class="bar-label" id="enemy-name">Враг</span>
+            <div class="bar"><div id="enemy-hp" class="bar-fill hp-enemy"></div></div>
+          </div>
+        </div>
+        <div class="hud-stats">
+          <span id="coins-display">🪙 0</span>
+          <span id="stars-display">⭐ 0</span>
+        </div>
+      </div>
+
+      <canvas id="game-canvas"></canvas>
+
+      <div id="puzzle-overlay" class="overlay hidden">
+        <div class="puzzle-panel">
+          <h3 id="puzzle-title">Загадка</h3>
+          <p id="puzzle-text"></p>
+          <div id="puzzle-options"></div>
+          <p id="puzzle-hint" class="hint hidden"></p>
+        </div>
+      </div>
+
+      <div id="message-overlay" class="overlay hidden">
+        <p id="message-text"></p>
+      </div>
+
+      <!-- Мобильное управление -->
+      <div id="controls">
+        <div class="controls-left">
+          <button id="btn-left" class="ctrl-btn" data-action="left">◀</button>
+          <button id="btn-right" class="ctrl-btn" data-action="right">▶</button>
+        </div>
+        <div class="controls-right">
+          <button id="btn-jump" class="ctrl-btn ctrl-jump" data-action="jump">⬆</button>
+          <button id="btn-attack" class="ctrl-btn ctrl-attack" data-action="attack">⚔</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Пауза -->
+    <div id="pause-screen" class="screen overlay-screen">
+      <div class="panel">
+        <h2>⏸ Пауза</h2>
+        <button id="btn-resume" class="btn btn-primary">Продолжить</button>
+        <button id="btn-restart-level" class="btn btn-secondary">Начать уровень заново</button>
+        <button id="btn-quit" class="btn btn-secondary">В меню</button>
+      </div>
+    </div>
+
+    <!-- Поражение -->
+    <div id="defeat-screen" class="screen overlay-screen">
+      <div class="panel defeat-panel">
+        <h2>💔 Поражение</h2>
+        <p>Миша не сдался! Попробуй ещё раз.</p>
+        <button id="btn-retry" class="btn btn-primary">Начать заново</button>
+        <button id="btn-defeat-menu" class="btn btn-secondary">В меню</button>
+      </div>
+    </div>
+
+    <!-- Победа уровня -->
+    <div id="level-complete-screen" class="screen overlay-screen">
+      <div class="panel victory-panel">
+        <h2>🎉 Уровень пройден!</h2>
+        <p id="level-complete-text"></p>
+        <button id="btn-next-level" class="btn btn-primary">Следующий уровень →</button>
+      </div>
+    </div>
+
+    <!-- Финальная победа -->
+    <div id="final-victory-screen" class="screen overlay-screen">
+      <canvas id="confetti-canvas"></canvas>
+      <div class="panel final-panel">
+        <canvas id="final-scene-canvas" width="300" height="200"></canvas>
+        <h1 class="final-title">Миша, ты победил!</h1>
+        <p class="final-subtitle">Принцесса спасена! 🏰👸</p>
+        <button id="btn-play-again" class="btn btn-primary">Играть снова</button>
+        <button id="btn-view-achievements" class="btn btn-secondary">Посмотреть достижения</button>
+      </div>
+    </div>
+
+    <!-- Достижения -->
+    <div id="achievements-screen" class="screen overlay-screen">
+      <div class="panel achievements-panel">
+        <h2>🏆 Достижения</h2>
+        <ul id="achievements-list"></ul>
+        <button id="btn-achievements-back" class="btn btn-secondary">Назад</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/audio.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/achievements.js"></script>
+  <script src="js/entities.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/puzzles.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
