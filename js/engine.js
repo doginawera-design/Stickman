@@ -100,6 +100,7 @@ const GameEngine = (() => {
   }
 
   function start() {
+    resize();
     if (animId) cancelAnimationFrame(animId);
     loop();
   }
@@ -113,9 +114,37 @@ const GameEngine = (() => {
   function resume() { if (state === 'paused') state = 'playing'; }
 
   function loop() {
-    if (state === 'playing') update();
+    if (state === 'playing' || state === 'victory_walk' || state === 'final_victory') update();
     render();
     animId = requestAnimationFrame(loop);
+  }
+
+  function updateVictoryWalk() {
+    const targetX = princess.x - 35;
+    const dir = targetX > player.x ? 1 : -1;
+    player.vx = dir * 2;
+    player.x += player.vx;
+    player.vy = 0;
+    player.state = 'run';
+    player.facing = dir;
+
+    for (const p of platforms) {
+      if (player.x + player.w > p.x && player.x < p.x + p.w) {
+        player.y = p.y - player.h;
+      }
+    }
+
+    if (Math.abs(player.x - targetX) < 5) {
+      player.x = targetX;
+      player.victoryPose = true;
+      player.vx = 0;
+      player.state = 'idle';
+      state = 'final_victory';
+      setTimeout(() => completeLevel(), 1500);
+    }
+
+    camera.x = Math.max(0, Math.min(player.x - width / 3, worldWidth - width));
+    updateHUD();
   }
 
   function update() {
@@ -126,6 +155,19 @@ const GameEngine = (() => {
         if (el) el.classList.add('hidden');
       }
     }
+
+    if (state === 'victory_walk') {
+      updateVictoryWalk();
+      return;
+    }
+
+    if (state === 'final_victory') {
+      camera.x = Math.max(0, Math.min(player.x - width / 3, worldWidth - width));
+      updateHUD();
+      return;
+    }
+
+    if (state !== 'playing') return;
 
     const prevHp = player.hp;
     player.update(input, platforms, hazards);
@@ -191,26 +233,11 @@ const GameEngine = (() => {
       if (levelData.type === 'final' && princess) {
         state = 'victory_walk';
         player.victoryPose = false;
+        updateVictoryWalk();
       } else {
         completeLevel();
       }
-    }
-
-    if (state === 'victory_walk') {
-      const targetX = princess.x - 35;
-      const dir = targetX > player.x ? 1 : -1;
-      player.vx = dir * 2;
-      player.x += player.vx;
-      player.state = 'run';
-      player.facing = dir;
-      if (Math.abs(player.x - targetX) < 5) {
-        player.x = targetX;
-        player.victoryPose = true;
-        player.vx = 0;
-        player.state = 'idle';
-        state = 'final_victory';
-        setTimeout(() => completeLevel(), 1500);
-      }
+      return;
     }
 
     camera.x = Math.max(0, Math.min(player.x - width / 3, worldWidth - width));
